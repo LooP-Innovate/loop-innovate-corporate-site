@@ -55,12 +55,12 @@ export function JourneyStill({
             src={resolvedStill.src}
             alt=""
             fill
-            sizes="100vw"
+            sizes={scene.id === "return" ? "1672px" : "100vw"}
             preload={preload}
             loading={preload ? undefined : "eager"}
             fetchPriority={preload ? "high" : "auto"}
             draggable={false}
-            unoptimized={scene.id === "return"}
+            quality={scene.id === "return" ? 90 : undefined}
           />
         ) : (
           <div

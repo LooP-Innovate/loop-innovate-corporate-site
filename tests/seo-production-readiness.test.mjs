@@ -84,13 +84,14 @@ test("withholds Tokushoho publication until every operator fact is confirmed", (
 });
 
 test("ships code-native social identity and explicit production gates", async () => {
-  const [layout, route, sitemap, icon, og, env] = await Promise.all([
+  const [layout, route, sitemap, icon, og, env, nextConfig] = await Promise.all([
     readFile("app/layout.tsx", "utf8"),
     readFile("app/[slug]/page.tsx", "utf8"),
     readFile("app/sitemap.ts", "utf8"),
     readFile("app/icon.tsx", "utf8"),
     readFile("app/opengraph-image.tsx", "utf8"),
     readFile(".env.example", "utf8"),
+    readFile("next.config.ts", "utf8"),
   ]);
 
   assert.match(layout, /Organization/);
@@ -100,8 +101,19 @@ test("ships code-native social identity and explicit production gates", async ()
   assert.match(route, /const socialImageUrl = configuredSiteUrl/);
   assert.match(route, /images: socialImageUrl/);
   assert.match(route, /url: configuredSiteUrl/);
+  assert.match(
+    layout,
+    /alternates:\s*indexingEnabled && configuredSiteUrl/,
+  );
+  assert.match(
+    route,
+    /alternates: routeIndexingEnabled && configuredSiteUrl/,
+  );
   assert.match(sitemap, /isTokushohoPublicationReady/);
   assert.match(icon, /∞/);
   assert.match(og, /FIELD TO SYSTEM/);
   assert.match(env, /NEXT_PUBLIC_CONTACT_READY=false/);
+  assert.match(nextConfig, /source: "\/terms-of-service"/);
+  assert.match(nextConfig, /destination: "\/terms"/);
+  assert.match(nextConfig, /statusCode: 301/);
 });

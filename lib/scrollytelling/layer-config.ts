@@ -33,12 +33,15 @@ export type JourneyLayerAsset = {
   src: `${typeof JOURNEY_LAYER_PUBLIC_DIRECTORY}/${string}.webp`;
   motion: JourneyLayerMotion;
   containsHuman: false;
+  delivery: "source" | "next-image";
+  quality: 90 | null;
 };
 
 function defineLayer(
   sceneId: SceneId,
   id: string,
   motion: JourneyLayerMotion,
+  delivery: JourneyLayerAsset["delivery"] = "source",
 ): JourneyLayerAsset {
   return Object.freeze({
     id,
@@ -46,6 +49,8 @@ function defineLayer(
     src: `${JOURNEY_LAYER_PUBLIC_DIRECTORY}/${sceneId}/${id}.webp`,
     motion,
     containsHuman: false,
+    delivery,
+    quality: delivery === "next-image" ? 90 : null,
   });
 }
 
@@ -74,11 +79,16 @@ export const JOURNEY_LAYERS = Object.freeze({
     defineLayer("adopt", "ambient-glow", "ambient-glow"),
   ],
   return: [
-    defineLayer("return", "milky-way-stars", "milky-way-stars"),
-    defineLayer("return", "star-field", "star-field"),
-    defineLayer("return", "dawn-horizon-glow", "dawn-horizon-glow"),
-    defineLayer("return", "subtle-grid-flow", "subtle-grid-flow"),
-    defineLayer("return", "blue-particles", "blue-particles"),
+    defineLayer("return", "milky-way-stars", "milky-way-stars", "next-image"),
+    defineLayer("return", "star-field", "star-field", "next-image"),
+    defineLayer(
+      "return",
+      "dawn-horizon-glow",
+      "dawn-horizon-glow",
+      "next-image",
+    ),
+    defineLayer("return", "subtle-grid-flow", "subtle-grid-flow", "next-image"),
+    defineLayer("return", "blue-particles", "blue-particles", "next-image"),
   ],
 } satisfies Readonly<Record<SceneId, readonly JourneyLayerAsset[]>>);
 

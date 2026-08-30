@@ -31,6 +31,13 @@ test("registers a bounded selected-layer set for all six scenes", () => {
     Object.values(JOURNEY_LAYERS).map((layers) => layers.length),
     [1, 4, 4, 3, 3, 5],
   );
+
+  for (const [sceneId, layers] of Object.entries(JOURNEY_LAYERS)) {
+    for (const layer of layers) {
+      assert.equal(layer.delivery, sceneId === "return" ? "next-image" : "source");
+      assert.equal(layer.quality, sceneId === "return" ? 90 : null);
+    }
+  }
 });
 
 test("keeps selected URLs unique, canonical, and backed by WebP files", () => {

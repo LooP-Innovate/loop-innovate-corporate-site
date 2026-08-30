@@ -6,12 +6,13 @@ const nextConfig: NextConfig = {
       {
         source: "/terms-of-service",
         destination: "/terms",
-        permanent: true,
+        statusCode: 301,
       },
     ];
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [75, 90],
   },
   turbopack: {
     root: process.cwd(),

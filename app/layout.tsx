@@ -44,7 +44,8 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  alternates: configuredSiteUrl ? { canonical: "/" } : undefined,
+  alternates:
+    indexingEnabled && configuredSiteUrl ? { canonical: "/" } : undefined,
   robots: indexingEnabled
     ? { index: true, follow: true }
     : { index: false, follow: false, nocache: true },

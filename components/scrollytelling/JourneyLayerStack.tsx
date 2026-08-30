@@ -23,11 +23,13 @@ export function JourneyLayerStack({ sceneId }: JourneyLayerStackProps) {
           src={layer.src}
           alt=""
           fill
-          sizes="100vw"
+          sizes={sceneId === "return" ? "1672px" : "100vw"}
           loading="lazy"
           draggable={false}
-          unoptimized
+          unoptimized={layer.delivery === "source"}
+          quality={layer.quality ?? undefined}
           data-layer-id={layer.id}
+          data-layer-delivery={layer.delivery}
           data-layer-motion={layer.motion}
         />
       ))}

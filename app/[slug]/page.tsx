@@ -36,7 +36,7 @@ export async function generateMetadata({
   return {
     title: { absolute: content.metadataTitle },
     description: content.metaDescription,
-    alternates: configuredSiteUrl
+    alternates: routeIndexingEnabled && configuredSiteUrl
       ? { canonical: `/${content.slug}` }
       : undefined,
     robots: routeIndexingEnabled
