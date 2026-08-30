@@ -28,7 +28,7 @@
   --loop-destination-angle: -1deg;
   --loop-destination-scale: 0.99;
   position: relative;
-  min-height: 600svh;
+  min-height: 500svh;
   background: var(--site-paper, #f4f4f4);
 }
 
@@ -1607,11 +1607,6 @@
   animation: storyBody 760ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes storySoftRise {
-  from { opacity: 0; transform: translateY(1.4rem); }
-  to { opacity: 1; transform: none; }
-}
-
 @keyframes storyAlign {
   from { opacity: 0; letter-spacing: 0.11em; transform: translateX(-1.4rem); }
   to { opacity: 1; letter-spacing: -0.05em; transform: none; }
@@ -2057,6 +2052,19 @@
 }
 
 @media (max-width: 30rem) and (max-height: 42rem) and (orientation: portrait) {
+  .sceneReadout {
+    left: max(4rem, env(safe-area-inset-left));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .sceneReadout p {
+    font-size: 1.25rem;
+  }
+
+  .progressTrack {
+    bottom: max(0.45rem, env(safe-area-inset-bottom));
+  }
+
   .buildSystemWindow {
     top: calc(var(--header-height) + env(safe-area-inset-top) + 0.5rem);
     height: 15rem;

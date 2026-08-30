@@ -3,18 +3,21 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 test("integrates the real founder portrait only in the existing About founder section", async () => {
-  const [routeSource, portrait] = await Promise.all([
+  const [routeSource, contentSource, portrait] = await Promise.all([
     readFile("components/site/RoutePage.tsx", "utf8"),
+    readFile("lib/site/site-content.ts", "utf8"),
     readFile("public/media/corporate/founder-koichi-mikami.webp"),
   ]);
 
   assert.equal(portrait.subarray(0, 4).toString("ascii"), "RIFF");
   assert.equal(portrait.subarray(8, 12).toString("ascii"), "WEBP");
   assert.match(routeSource, /content\.slug === "about" && index === 0/);
-  assert.match(routeSource, /founder-koichi-mikami\.webp/);
-  assert.match(routeSource, /alt="L∞P Innovate代表 三上耕一のプロフィール写真"/);
+  assert.match(routeSource, /src=\{FOUNDER_PROFILE\.portrait\}/);
+  assert.match(routeSource, /alt=\{FOUNDER_PROFILE\.portraitAlt\}/);
+  assert.match(contentSource, /founder-koichi-mikami\.webp/);
+  assert.match(contentSource, /L∞P Innovate代表 三上耕一のプロフィール写真/);
   assert.match(routeSource, /FOUNDER \/ PROFILE/);
-  assert.match(routeSource, /三上 耕一/);
+  assert.match(routeSource, /FOUNDER_PROFILE\.name/);
   assert.doesNotMatch(routeSource, /priority|loading="eager"/);
 });
 

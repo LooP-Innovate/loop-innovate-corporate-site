@@ -5,6 +5,8 @@ import {
   BUILD_STEP_BOUNDARIES,
   BUILD_WINDOW_STEPS,
   RETURN_FORMATION_END,
+  RETURN_FORMATION_START,
+  RETURN_ENDPOINT_HOLD_END,
   getBuildWindowStep,
   getJourneyInteractionState,
   getReturnExitPhase,
@@ -58,25 +60,28 @@ test("honors the quiet RETURN dawn phase boundaries", () => {
   }
 });
 
-test("completes RETURN before the dedicated exit range starts", () => {
-  assert.equal(getReturnTransitionProgress(atFinalSegment(0)), 0);
+test("keeps ADOPT primary before preparing and crossfading into RETURN", () => {
+  assert.equal(
+    getReturnTransitionProgress(atFinalSegment(RETURN_FORMATION_START - 0.01)),
+    0,
+  );
   assertApproximately(
-    getReturnTransitionProgress(atFinalSegment(RETURN_FORMATION_END / 2)),
+    getReturnTransitionProgress(
+      atFinalSegment((RETURN_FORMATION_START + RETURN_FORMATION_END) / 2),
+    ),
     0.5,
   );
   assertApproximately(
     getReturnTransitionProgress(atFinalSegment(RETURN_FORMATION_END)),
     1,
   );
-  assert.equal(getReturnTransitionProgress(atFinalSegment(0.92)), 1);
+  assert.equal(getReturnTransitionProgress(atFinalSegment(1)), 1);
 
-  assert.equal(getReturnExitProgress(atFinalSegment(0.5)), 0);
-  assertApproximately(
-    getReturnExitProgress(atFinalSegment(RETURN_FORMATION_END)),
-    0,
-  );
-  assertApproximately(getReturnExitProgress(atFinalSegment(0.86)), 0.5);
-  assert.equal(getReturnExitProgress(atFinalSegment(1)), 1);
+  const endpoint = calculateJourneyTimeline(1, 6);
+  assert.equal(getReturnExitProgress(atFinalSegment(0.99)), 0);
+  assert.equal(getReturnExitProgress(endpoint, 5, RETURN_ENDPOINT_HOLD_END), 0);
+  assertApproximately(getReturnExitProgress(endpoint, 5, 0.75), 0.5);
+  assert.equal(getReturnExitProgress(endpoint, 5, 1), 1);
 });
 
 test("maps the RETURN exit through particles, erosion, wash, and white", () => {
@@ -108,7 +113,7 @@ test("maps the RETURN exit through particles, erosion, wash, and white", () => {
 });
 
 test("keeps RETURN formation and exit fully reversible", () => {
-  const segmentValues = [0, 0.18, 0.4, 0.576, 0.72, 0.79, 0.86, 0.94, 1];
+  const segmentValues = [0, 0.55, 0.74, 0.75, 0.82, 0.9, 0.94, 0.98, 1];
   const sample = (segmentProgress) => {
     const timeline = atFinalSegment(segmentProgress);
     return {
@@ -155,13 +160,41 @@ test("exposes coherent CSS interaction values without React-only state", () => {
   assert.equal(buildState.buildStep, "ai-workflow");
 
   const returnState = getJourneyInteractionState(
-    atFinalSegment(0.576),
+    atFinalSegment(0.95),
     "adopt",
     false,
   );
   assert.equal(returnState.returnPhase, "complete");
   assertApproximately(returnState.returnProgress, 0.8);
-  assert.equal(returnState.returnExitProgress, 0);
+  assertApproximately(returnState.returnExitProgress, 0);
+  assert.equal(
+    getJourneyInteractionState(atFinalSegment(0.55), "adopt", false).adoptLight,
+    0,
+  );
+  assert.equal(
+    getJourneyInteractionState(atFinalSegment(0.75), "adopt", false).adoptLight,
+    1,
+  );
+
+  const endpointState = getJourneyInteractionState(
+    calculateJourneyTimeline(1, 6),
+    "return",
+    false,
+    0.75,
+  );
+  assertApproximately(endpointState.returnExitProgress, 0.5);
+  assert.equal(endpointState.returnBaseOpacity, 1);
+
+  assert.equal(
+    getJourneyInteractionState(atFinalSegment(0.95), "adopt", true)
+      .returnBaseOpacity,
+    0,
+  );
+  assert.equal(
+    getJourneyInteractionState(calculateJourneyTimeline(1, 6), "return", true)
+      .returnBaseOpacity,
+    1,
+  );
 });
 
 test("clamps invalid progress and rejects inverted ranges", () => {

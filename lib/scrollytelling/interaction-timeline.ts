@@ -25,7 +25,9 @@ export type ReturnExitPhase =
 
 export const BUILD_STEP_BOUNDARIES = [0, 0.16, 0.32, 0.48, 0.66, 0.82, 1] as const;
 export const RETURN_PHASE_BOUNDARIES = [0, 0.25, 0.55, 0.8, 1] as const;
-export const RETURN_FORMATION_END = 0.72;
+export const RETURN_FORMATION_START = 0.75;
+export const RETURN_FORMATION_END = 1;
+export const RETURN_ENDPOINT_HOLD_END = 0.5;
 
 type TimelineSlice = {
   sceneIndex: number;
@@ -135,8 +137,9 @@ export function getBuildWindowStep(
 }
 
 /**
- * RETURN is the sixth anchor, not a sixth scroll interval. Its formation uses
- * the first 72% of ADOPT→RETURN, leaving the tail as a distinct exit range.
+ * RETURN is the sixth anchor, not a sixth scroll interval. ADOPT remains a
+ * people-first scene through 55%, shifts into a quiet technology phase, and
+ * begins preparing RETURN at 75%. The visual crossfade starts at 90%.
  */
 export function getReturnTransitionProgress(
   timeline: TimelineSlice,
@@ -150,22 +153,23 @@ export function getReturnTransitionProgress(
     return 0;
   }
 
-  return normalizeProgress(timeline.segmentProgress, 0, RETURN_FORMATION_END);
+  return normalizeProgress(
+    timeline.segmentProgress,
+    RETURN_FORMATION_START,
+    RETURN_FORMATION_END,
+  );
 }
 
 export function getReturnExitProgress(
   timeline: TimelineSlice,
   returnSceneIndex = 5,
+  endpointProgress = 0,
 ): number {
   if (timeline.sceneIndex === returnSceneIndex) {
-    return 1;
+    return normalizeProgress(endpointProgress, RETURN_ENDPOINT_HOLD_END, 1);
   }
 
-  if (timeline.nextSceneIndex !== returnSceneIndex) {
-    return 0;
-  }
-
-  return normalizeProgress(timeline.segmentProgress, RETURN_FORMATION_END, 1);
+  return 0;
 }
 
 export function getReturnPhase(returnProgress: number): ReturnPhase {
@@ -255,10 +259,15 @@ export function getJourneyInteractionState(
   timeline: TimelineSlice,
   currentSceneId: SceneId,
   reducedMotion: boolean,
+  endpointProgress = 0,
 ): JourneyInteractionState {
   const localProgress = clampUnit(timeline.segmentProgress);
   const returnProgress = getReturnTransitionProgress(timeline);
-  const returnExitProgress = getReturnExitProgress(timeline);
+  const returnExitProgress = getReturnExitProgress(
+    timeline,
+    5,
+    endpointProgress,
+  );
   const exitVisual = getReturnExitVisualState(
     returnExitProgress,
     reducedMotion,
@@ -273,7 +282,14 @@ export function getJourneyInteractionState(
         : "observe",
     returnPhase: getReturnPhase(returnProgress),
     returnProgress,
-    returnBaseOpacity: normalizeProgress(returnProgress, 0, 0.08),
+    returnBaseOpacity:
+      reducedMotion
+        ? currentSceneId === "return"
+          ? 1
+          : 0
+        : currentSceneId === "return"
+          ? 1
+          : normalizeProgress(localProgress, 0.9, 1),
     returnStarBreath: windowProgress(returnProgress, 0.25, 0.38, 0.68, 0.82),
     returnHorizonGlow: normalizeProgress(returnProgress, 0.25, 0.8),
     returnSkyLift: normalizeProgress(returnProgress, 0.55, 0.95),
@@ -284,7 +300,7 @@ export function getJourneyInteractionState(
     ...exitVisual,
     adoptLight:
       currentSceneId === "adopt"
-        ? normalizeProgress(localProgress, 0.65, 0.9)
+        ? normalizeProgress(localProgress, 0.55, 0.75)
         : 0,
   };
 }

@@ -28,7 +28,7 @@
   text-shadow: 0 0.25rem 2.5rem rgb(0 0 0 / 62%);
 }
 
-.heroCopy > p,
+.heroEyebrow,
 .heroMeta {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.66rem;
@@ -36,7 +36,7 @@
   text-transform: uppercase;
 }
 
-.heroCopy > p {
+.heroEyebrow {
   margin: 0 0 1.5rem;
   color: #7fcce8;
 }
@@ -53,6 +53,38 @@
 
 .heroCopy h1 span {
   display: block;
+}
+
+.heroDescriptor {
+  max-width: 42rem;
+  margin: 1.35rem 0 0;
+  color: rgb(247 251 255 / 88%);
+  font-size: clamp(0.98rem, 1.35vw, 1.16rem);
+  font-weight: 470;
+  letter-spacing: 0.025em;
+  line-height: 1.65;
+  text-wrap: balance;
+}
+
+.heroDescriptorA11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.heroDescriptorDesktop {
+  display: block;
+}
+
+.heroDescriptorMobile {
+  display: none;
 }
 
 .heroActions {
@@ -104,11 +136,26 @@
     font-size: clamp(2.75rem, 12vw, 4.25rem);
   }
 
+  .heroDescriptorDesktop {
+    display: none;
+  }
+
+  .heroDescriptorMobile,
+  .heroDescriptorMobile span {
+    display: block;
+  }
+
   .heroMeta {
     margin-top: 2rem;
     color: rgb(247 251 255 / 72%);
   }
 
+}
+
+@media (max-width: 30rem) and (max-height: 42rem) and (orientation: portrait) {
+  .heroMeta {
+    display: none;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 32rem) {
@@ -123,7 +170,7 @@
       max(1.5rem, env(safe-area-inset-left));
   }
 
-  .heroCopy > p {
+  .heroEyebrow {
     margin-bottom: 0.75rem;
   }
 
@@ -135,6 +182,12 @@
   .heroMeta {
     gap: 0.5rem 1rem;
     margin-top: 1rem;
+  }
+
+  .heroDescriptor {
+    margin-top: 0.9rem;
+    font-size: 0.94rem;
+    line-height: 1.55;
   }
 
   .heroActions {

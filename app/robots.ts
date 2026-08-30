@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getConfiguredSiteUrl, isIndexingEnabled } from "@/lib/site/seo";
+import { getPublicSiteUrl, isIndexingEnabled } from "@/lib/site/seo";
 
 export default function robots(): MetadataRoute.Robots {
   const indexingEnabled = isIndexingEnabled();
-  const siteUrl = getConfiguredSiteUrl();
+  const siteUrl = getPublicSiteUrl();
 
   return {
     rules: {

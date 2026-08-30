@@ -1,18 +1,9 @@
 import Image from "next/image";
+import { FOUNDER_PROFILE } from "@/lib/site/site-content";
 import { FieldToInfinityMotion } from "./FieldToInfinityMotion";
 import styles from "./site.module.css";
 
-const ABOUT_FACTS = [
-  { label: "FIELD EXPERIENCE", value: "20+ years" },
-  { label: "QUALIFICATION", value: "Social Worker" },
-  { label: "QUALIFICATION", value: "Certified Care Worker" },
-  { label: "PRACTICE", value: "ICT / Productivity" },
-  { label: "IMPLEMENTATION", value: "AI / Workflow" },
-  {
-    label: "DELIVERY PATH",
-    value: "Field → Requirement → Implementation",
-  },
-] as const;
+const ABOUT_FACTS = FOUNDER_PROFILE.visualFacts;
 
 const SERVICE_STAGES = [
   {

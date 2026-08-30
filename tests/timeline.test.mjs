@@ -4,7 +4,12 @@ import test from "node:test";
 import {
   calculateBlendProgress,
   calculateJourneyTimeline,
+  getJourneyEndpointProgress,
+  getWeightedJourneyScrollProgress,
   getSceneJourneyProgress,
+  JOURNEY_ENDPOINT_SCROLL_START,
+  JOURNEY_SEGMENT_WEIGHTS,
+  remapJourneyScrollProgress,
 } from "../lib/scrollytelling/timeline.ts";
 
 const SCENE_COUNT = 6;
@@ -132,9 +137,50 @@ test("converts a rail scene index back to normalized journey progress", () => {
   assert.deepEqual(targets, [0, 0.2, 0.4, 0.6, 0.8, 1]);
 });
 
+test("allocates more physical scroll to BUILD and ADOPT to RETURN", () => {
+  assert.equal(
+    JOURNEY_SEGMENT_WEIGHTS.reduce((total, weight) => total + weight, 0),
+    5,
+  );
+  assert.ok(JOURNEY_SEGMENT_WEIGHTS[0] < JOURNEY_SEGMENT_WEIGHTS[3]);
+  assert.ok(JOURNEY_SEGMENT_WEIGHTS[1] < JOURNEY_SEGMENT_WEIGHTS[3]);
+  assert.ok(JOURNEY_SEGMENT_WEIGHTS[2] < JOURNEY_SEGMENT_WEIGHTS[3]);
+  assert.ok(JOURNEY_SEGMENT_WEIGHTS[4] > JOURNEY_SEGMENT_WEIGHTS[3]);
+
+  const physicalBoundaries = [0, 0.14352, 0.29808, 0.46, 0.66608, 0.92];
+  physicalBoundaries.forEach((physicalProgress, index) => {
+    assertApproximately(
+      remapJourneyScrollProgress(physicalProgress),
+      index / 5,
+    );
+  });
+});
+
+test("round-trips weighted physical and scene progress before the endpoint tail", () => {
+  for (const progress of [0, 0.08, 0.14352, 0.31, 0.46, 0.71, 0.9]) {
+    assertApproximately(
+      getWeightedJourneyScrollProgress(remapJourneyScrollProgress(progress)),
+      progress,
+    );
+  }
+});
+
+test("reserves the final physical scroll for a calm RETURN endpoint", () => {
+  assert.equal(remapJourneyScrollProgress(JOURNEY_ENDPOINT_SCROLL_START), 1);
+  assert.equal(getJourneyEndpointProgress(JOURNEY_ENDPOINT_SCROLL_START), 0);
+  assertApproximately(getJourneyEndpointProgress(0.96), 0.5);
+  assert.equal(getJourneyEndpointProgress(1), 1);
+  assert.equal(getWeightedJourneyScrollProgress(1), JOURNEY_ENDPOINT_SCROLL_START);
+});
+
 test("rejects invalid scene counts, indices, and blend windows", () => {
   assert.throws(() => calculateJourneyTimeline(0, 0), RangeError);
   assert.throws(() => calculateJourneyTimeline(0, 2.5), RangeError);
   assert.throws(() => calculateJourneyTimeline(0, 2, 1), RangeError);
   assert.throws(() => getSceneJourneyProgress(6, SCENE_COUNT), RangeError);
+  assert.throws(() => remapJourneyScrollProgress(0.5, []), RangeError);
+  assert.throws(
+    () => getWeightedJourneyScrollProgress(0.5, [1, 0, 1]),
+    RangeError,
+  );
 });

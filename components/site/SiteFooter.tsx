@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isTokushohoPublicationReady } from "@/lib/site/legal-content";
 import {
   FOOTER_NAVIGATION,
   POLICY_NAVIGATION,
@@ -8,6 +9,9 @@ import styles from "./site.module.css";
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
   const copyrightYears = currentYear > 2025 ? `2025–${currentYear}` : "2025";
+  const policyNavigation = POLICY_NAVIGATION.filter(
+    (item) => item.href !== "/tokushoho" || isTokushohoPublicationReady(),
+  );
 
   return (
     <footer className={styles.siteFooter} data-cursor-tone="dark">
@@ -31,7 +35,7 @@ export function SiteFooter() {
         </nav>
         <nav aria-label="ポリシーナビゲーション">
           <p>Trust &amp; Legal</p>
-          {POLICY_NAVIGATION.map((item) => (
+          {policyNavigation.map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>

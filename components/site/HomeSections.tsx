@@ -134,19 +134,16 @@ export function HomeSections() {
       >
         <div className={styles.sectionFrame}>
           <SectionIntro
-            eyebrow="AI / DX APPROACH"
-            title="導入ではなく、機能する状態へ。"
-            body="生成AIや自動化は、導入しただけでは改善になりません。目的、データ、業務フロー、人の判断、運用条件まで整理して、初めて「使える仕組み」になります。"
+            eyebrow="DELIVERY MODEL / AI-FDE"
+            title="現場へ入り、使える状態までつなぐ。"
+            body="AI-FDEは、現場の課題理解から設計、実装、導入、改善までを一つの支援工程として扱う、L∞P InnovateのDelivery Modelです。"
             titleId="approach-title"
           />
           <div className={styles.approachGrid} data-motion="progress">
             <div className={styles.approachIndex} aria-hidden="true">
-              <span>F</span>
-              <span>O</span>
-              <span>D</span>
-              <span>B</span>
-              <span>A</span>
-              <span>R</span>
+              <span>FIELD</span>
+              <span>BUILD</span>
+              <span>ADOPT</span>
             </div>
             <ol className={styles.approachList}>
               <li data-motion="stagger">
@@ -196,9 +193,9 @@ export function HomeSections() {
       <section className={styles.processSection} aria-labelledby="process-title" data-cursor-light-surface>
         <div className={styles.sectionFrame}>
           <SectionIntro
-            eyebrow="PROCESS / FIELD LOOP"
+            eyebrow="PHILOSOPHY / FIELD LOOP"
             title="FIELDから、RETURNまで。"
-            body="改善を一度きりの導入ではなく、現場へ戻りながら更新し続ける循環として捉えています。"
+            body="FIELD LOOPは、現場を起点に、理解・整理・設計・実装・定着・改善を循環させるL∞P Innovateの思想です。"
             titleId="process-title"
           />
           <ol className={styles.processList} data-motion="flow">
@@ -227,10 +224,11 @@ export function HomeSections() {
               <strong>SCOPE FIRST</strong>
             </div>
             <ul>
-              <li data-motion="slide">Initial Definition / 課題整理</li>
-              <li data-motion="slide">PoC / 小規模検証</li>
-              <li data-motion="slide">Project Build / 個別実装</li>
-              <li data-motion="slide">Continuous Support / 継続支援</li>
+              <li data-motion="slide">Field Session / 30,000円〜</li>
+              <li data-motion="slide">PoC / Prototype / 100,000円〜</li>
+              <li data-motion="slide">Project Build / 300,000円〜</li>
+              <li data-motion="slide">Continuous Support / 30,000円 / 月〜</li>
+              <li className={styles.pricingTaxNote}>表示価格は税別です。</li>
             </ul>
             <Link className={styles.solidLink} href="/pricing">
               料金の考え方を見る <span aria-hidden="true">↗</span>

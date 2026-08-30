@@ -3,6 +3,8 @@
 > **Status: Work in Progress / 開発中**  
 > 本リポジトリは、完成品の展示ではなく、要件整理・設計・AI駆動開発・実装・検証・改善のプロセスを伝えるためのポートフォリオです。
 
+FIELD LOOPの6シーンと、事業内容・相談導線を同じファーストビューで伝えるHero Experienceです。
+
 ![L∞P Innovate Corporate SiteのHero](docs/portfolio/home-hero.png)
 
 ## プロジェクト概要
@@ -25,11 +27,11 @@ AIコンサルティング、AI導入支援、業務改善、AIアプリ開発�
 - **FIELD LOOP Hero Experience** — 6つのシーンをスクロール進行に対応させたScrollytelling
 - **レスポンシブUI** — Wide / Desktop / Tablet / Compact / Narrowを意識したレイアウト
 - **モーション設計** — スクロール連動、シーン遷移、レイヤー表現、Reduced Motion対応
-- **コーポレートページ** — About / Services / AI-FDE / Case Studies / Pricing / FAQ / Contact
-- **Trust & Legal** — Security / AI Policy / Privacy Policy / Terms / 特定商取引法表記 / Legal hub
+- **コーポレートページ** — About / Services / AI-FDE / Case Study / Pricing / FAQ / Contact
+- **Trust & Legal** — Security / AI Policy / Privacy Policy / Terms / Legal hub。特商法表記は確認済み事実が揃うまで公開導線から除外
 - **UIコンポーネント設計** — Header、Footer、Route Page、Hero、Corporate Sectionsを責務別に分離
 - **メディアフォールバック** — 画像・動画が未確定または取得できない場合も破綻させない構成
-- **SEO基盤** — Metadata、robots、sitemap、canonicalの環境変数による公開制御
+- **SEO基盤** — Metadata、robots、sitemap、canonical、favicon、OGP、Organization schemaの公開制御
 - **品質確認** — ESLint、TypeScript、Node.js標準テスト、production build、ブラウザーQA
 - **開発用診断** — productionには露出しないJourney Debugとアセット検証
 
@@ -71,6 +73,7 @@ CodexとClaude Codeを開発支援として活用しています。用途は単�
 | UI | React 19.2.8 | コンポーネント設計、状態管理 |
 | Language | TypeScript 5.9.3 | 型安全なページ、設定、Timeline |
 | Styling | CSS Modules / CSS Custom Properties | レスポンシブ、モーション、デザイントークン |
+| Typography | Noto Sans JP / Inter via `next/font` | 自己ホストWeb Font、Windows表示の安定化 |
 | Runtime | Node.js 24+ / npm | 開発、検証、production build |
 | Quality | ESLint / jsx-a11y / Node.js Test Runner | 静的解析、アクセシビリティ規則、単体テスト |
 | Version Control | Git / GitHub | 変更管理。Publicリポジトリとして公開中 |
@@ -83,9 +86,13 @@ Hero ExperienceはREADME冒頭に掲載しています。以下は主要な下�
 
 ### Services
 
+現場理解から要件整理、設計、実装、導入・定着までを支援範囲として示すページです。
+
 ![Servicesページ](docs/portfolio/services.png)
 
 ### Legal & Trust
+
+Privacy、Terms、Security、AI Policyを役割別に案内し、未確定情報を公開しないTrust hubです。
 
 ![Legal & Trustページ](docs/portfolio/legal-trust.png)
 
@@ -93,9 +100,9 @@ Hero ExperienceはREADME冒頭に掲載しています。以下は主要な下�
 
 | 状態 | 内容 |
 | --- | --- |
-| 完了済み | Next.js基盤、主要ルート、6シーンのHero基盤、レスポンシブ設計、Reduced Motion、法務・信頼ページ、Footer、SEO制御、54件の自動テスト |
-| 実装・調整中 | 動画・モーションの最終調整、コピー精査、Case Studiesの公開可能な実績整理、実機を含むレスポンシブ／アクセシビリティ確認 |
-| 今後対応予定 | コンテンツ最終承認、パフォーマンス計測、本番ドメインとindexing設定、Cloudflareを候補としたデプロイ、WordPress連携または編集導線の検討 |
+| 完了済み | Next.js基盤、主要ルート、510svhの6シーンHero、レスポンシブ設計、Reduced Motion、法務・信頼ページ、Footer、Web Font、SEO/OGP/schema制御、67件の自動テスト |
+| 実装・調整中 | 実機を含む最終QA、公開用Contact情報、料金・法務情報の運営者確認 |
+| 今後対応予定 | WordPress Contact実装、確定法務情報、本番ドメインとindexing設定、WordPressテーマ方式の比較・移行 |
 
 ## セットアップ
 
@@ -123,6 +130,7 @@ npm run dev
 NEXT_PUBLIC_JOURNEY_DEBUG=false
 NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_SITE_INDEXING=false
+NEXT_PUBLIC_CONTACT_READY=false
 FFPROBE_PATH=
 ```
 
@@ -136,7 +144,7 @@ npm run asset:check
 npm run build
 ```
 
-2026年8月時点で、lint、型検査、54件のテスト、production buildが通過しています。
+2026年8月時点で、lint、型検査、67件のテスト、production buildを品質Gateとして運用しています。
 
 ## ディレクトリ構成
 
@@ -163,6 +171,15 @@ tests/                       Timeline、アセット、UI契約の自動テス�
 4. Lighthouse等を用いたパフォーマンス／アクセシビリティ確認
 5. Cloudflareを候補とした本番デプロイ
 6. WordPressとの連携、または非エンジニア向け編集導線の検討
+
+## WordPress移行前の設計資料
+
+- [Font audit](docs/font-audit.md)
+- [Motion audit](docs/motion-audit.md)
+- [Brand naming rule](docs/brand-naming.md)
+- [Case Study content model](docs/content-models/case-study.md)
+- [WordPress migration architecture](docs/wordpress-migration-architecture.md)
+- [Production readiness](docs/production-readiness.md)
 
 ## 注意事項
 

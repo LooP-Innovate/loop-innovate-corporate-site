@@ -69,7 +69,7 @@ test("models six still anchors and preserves five optional transition contracts"
   );
 
   assert.equal(TRANSITIONS.length, 5);
-  assert.equal(JOURNEY_TRACK_HEIGHT_SVH, 650);
+  assert.equal(JOURNEY_TRACK_HEIGHT_SVH, 510);
   assert.deepEqual(
     TRANSITIONS.map((transition) => transition.contractVideoFile),
     [

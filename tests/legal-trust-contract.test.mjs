@@ -5,6 +5,7 @@ import test from "node:test";
 import { TOKUSHOHO_OPERATOR_CONFIG } from "../lib/site/legal-content.ts";
 
 test("keeps unconfirmed commercial-transaction facts out of published config", () => {
+  assert.equal(TOKUSHOHO_OPERATOR_CONFIG.publicationApproval, "pending");
   assert.equal(TOKUSHOHO_OPERATOR_CONFIG.sellerName, "未来創造工房 L∞P Innovate");
   assert.equal(TOKUSHOHO_OPERATOR_CONFIG.responsiblePerson, "三上 耕一");
 
@@ -35,6 +36,8 @@ test("publishes the complete trust and legal route contract", async () => {
   assert.match(route, /TRUST_LEGAL_ROUTES/);
   assert.match(route, /<h3>/);
   assert.match(route, /legalDocumentLink/);
+  assert.match(route, /const visibleItems = section\.items\.filter/);
+  assert.match(route, /item\.href !== "\/tokushoho" \|\| tokushohoReady/);
   assert.match(css, /@media print/);
   assert.match(footer, /2025–\$\{currentYear\}/);
   assert.match(footer, /All Rights Reserved\./);

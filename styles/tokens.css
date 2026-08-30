@@ -34,10 +34,10 @@
   --focus-ring: #7fcce8;
 
   /* Typography */
-  --font-sans: Inter, "Helvetica Neue", Arial, "Yu Gothic", YuGothic,
-    "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-  --font-display: "Helvetica Neue", Arial, "Yu Gothic", YuGothic,
-    "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  --font-sans: var(--font-inter), var(--font-noto-sans-jp), "Yu Gothic",
+    Meiryo, sans-serif;
+  --font-display: var(--font-inter), var(--font-noto-sans-jp), "Yu Gothic",
+    Meiryo, sans-serif;
   --font-mono: Consolas, Monaco, "Courier New", monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;

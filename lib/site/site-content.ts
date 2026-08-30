@@ -4,12 +4,41 @@ import {
   PENDING_PUBLICATION_NOTICE,
   TOKUSHOHO_OPERATOR_CONFIG,
 } from "./legal-content";
+import {
+  FEATURED_CASE_STUDY,
+  isCaseStudyPublishable,
+} from "./case-study-schema";
+
+const PUBLISHED_FEATURED_CASE_STUDY = isCaseStudyPublishable(
+  FEATURED_CASE_STUDY,
+)
+  ? FEATURED_CASE_STUDY
+  : null;
 
 export const SITE_NAME = "L∞P Innovate";
 export const SITE_METADATA_TITLE =
   "L∞P Innovate｜現場を、仕組みから変える。AI・業務改善・自動化";
 export const SITE_DESCRIPTION =
   "青森県を拠点に、AI/DX、業務自動化、AIワークフロー・業務アプリ開発を支援。現場理解から要件整理、実装、導入・定着までつなぐL∞P Innovate。";
+
+export const FOUNDER_PROFILE = {
+  name: "三上 耕一",
+  portrait: "/media/corporate/founder-koichi-mikami.webp",
+  portraitAlt: "L∞P Innovate代表 三上耕一のプロフィール写真",
+  experience: "福祉・介護の現場で20年以上",
+  qualifications: ["社会福祉士", "介護福祉士"],
+  visualFacts: [
+    { label: "FIELD EXPERIENCE", value: "20+ years" },
+    { label: "QUALIFICATION", value: "Social Worker" },
+    { label: "QUALIFICATION", value: "Certified Care Worker" },
+    { label: "PRACTICE", value: "ICT / Productivity" },
+    { label: "IMPLEMENTATION", value: "AI / Workflow" },
+    {
+      label: "DELIVERY PATH",
+      value: "Field → Requirement → Implementation",
+    },
+  ],
+} as const;
 
 export const SITE_ROUTE_SLUGS = [
   "about", "services", "ai-fde", "pricing", "case-studies", "faq",
@@ -24,7 +53,7 @@ export const PRIMARY_NAVIGATION = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "AI-FDE", href: "/ai-fde" },
-  { label: "Case Studies", href: "/case-studies" },
+  { label: "Case Study", href: "/case-studies" },
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },
 ] as const satisfies readonly NavigationItem[];
@@ -67,6 +96,7 @@ export const HOME_FAQ = [
 export type RouteItem = {
   title: string;
   body?: string;
+  price?: string;
   href?: `/${SiteRouteSlug}`;
 };
 export type RouteSection = {
@@ -98,7 +128,7 @@ export const SITE_ROUTE_CONTENT = {
     lead: "L∞P Innovateは、現場理解と実装を分離しません。人・業務・制度・技術の間に入り、課題を整理し、仕組みに変え、使われるところまで接続するための事業です。",
     introduction: "現場を知っているから、仕組みだけでは変わらないことを知っている。",
     sections: [
-      { eyebrow: "FOUNDER / FIELD EXPERIENCE", title: "現場理解を、実装へつなぐ。", body: "代表の三上耕一は、福祉・介護の現場で20年以上、生活相談・介護業務、利用者や家族への対応、関係職種との調整、会議・記録・情報共有に携わってきました。近年はICT・生産性向上の取り組みとして、介護テクノロジーの導入検討、委員会運営、説明資料や会議録の整備にも関わっています。L∞P Innovateは、その現場理解をAI・自動化・アプリ開発へつなぐために生まれました。", items: [
+      { eyebrow: "FOUNDER / FIELD EXPERIENCE", title: "現場理解を、実装へつなぐ。", body: `代表の${FOUNDER_PROFILE.name}は、${FOUNDER_PROFILE.experience}、生活相談・介護業務、利用者や家族への対応、関係職種との調整、会議・記録・情報共有に携わってきました。近年はICT・生産性向上の取り組みとして、介護テクノロジーの導入検討、委員会運営、説明資料や会議録の整備にも関わっています。L∞P Innovateは、その現場理解をAI・自動化・アプリ開発へつなぐために生まれました。`, items: [
         { title: "20年以上の福祉・介護実務" }, { title: "ICT・生産性向上の検討・委員会運営" }, { title: "社会福祉士 / 介護福祉士" },
       ] },
       { eyebrow: "01 / POSITIONING", title: "現場の言葉を、要件と実装へ。", body: "現場で起きていることを、そのまま開発仕様へ置き換えることはできません。業務を理解し、問題を分解し、優先順位をつけ、人と技術の役割を決める必要があります。L∞P Innovateは、現場と開発のあいだに立ち、その翻訳と実装を担います。", items: [
@@ -110,9 +140,9 @@ export const SITE_ROUTE_CONTENT = {
         { title: "Responsible technology", body: "AIの出力をそのまま正解にせず、人の確認、データの扱い、権限、責任の所在まで含めて設計する。" },
       ] },
       { eyebrow: "03 / COMPANY FACTS", title: "事業情報", body: "AIを調査・設計・開発・QA・ドキュメント制作等の業務基盤として活用し、少人数でも高密度に進めます。一方で、重要な判断、顧客との合意、個人情報・機密情報、最終確認は人が責任を持ちます。", items: [
-        { title: "屋号", body: "未来創造工房 L∞P Innovate" }, { title: "代表", body: "三上 耕一" },
+        { title: "屋号", body: "未来創造工房 L∞P Innovate" }, { title: "代表", body: FOUNDER_PROFILE.name },
         { title: "事業形態 / 開業", body: "個人事業 / 2025年4月" }, { title: "拠点", body: "青森県" },
-        { title: "資格", body: "社会福祉士 / 介護福祉士" }, { title: "主な領域", body: "AI/DX支援、AI-FDE、業務自動化、AIワークフロー、業務アプリ、Web、導入・定着支援" },
+        { title: "資格", body: FOUNDER_PROFILE.qualifications.join(" / ") }, { title: "主な領域", body: "AI/DX支援、AI-FDE、業務自動化、AIワークフロー、業務アプリ、Web、導入・定着支援" },
       ] },
     ],
   },
@@ -142,15 +172,15 @@ export const SITE_ROUTE_CONTENT = {
   "ai-fde": {
     slug: "ai-fde", navLabel: "AI-FDE", metadataTitle: "AI-FDE｜現場理解から実装・定着まで｜L∞P Innovate",
     metaDescription: "L∞P InnovateのAI-FDEは、現場理解、要件整理、設計、実装、導入、改善を一つの流れで扱う現場型AI実装支援モデルです。",
-    eyebrow: "AI-FDE / FIELD-LED IMPLEMENTATION", title: "AI-FDE", lead: "机上の提案ではなく、現場へ入り、業務を理解し、仕組みを実装し、使われる状態まで調整する。L∞P Innovateが、現場型AI実装のために採用する支援モデルです。", introduction: "現場と開発の距離を、実装で埋める。",
+    eyebrow: "AI-FDE / DELIVERY MODEL", title: "AI-FDE", lead: "現場の課題を理解し、必要な仕組みを設計・実装し、使える状態までつなげる、L∞P Innovateの現場密着型AI実装支援モデルです。", introduction: "現場と開発の距離を、実装で埋める。",
     sections: [
-      { eyebrow: "01 / DEFINITION", title: "AI-FDEとは", lead: "現場の課題を整理し、必要な仕組みを考え、実際に作り、使える状態までつなげる支援の進め方です。", body: "「AIを導入すること」から始めるのではなく、まず今の業務を理解し、どこを変えるべきかを整理します。必要に応じてAI・自動化・業務アプリを組み合わせ、導入後の運用や改善まで一つの流れとして支援します。", note: "L∞P Innovateでは、この現場密着型の進め方を「AI-FDE」と呼んでいます。", items: [
+      { eyebrow: "01 / DEFINITION", title: "AI-FDEとは", lead: "現場の課題を理解し、必要な仕組みを設計し、実装し、使える状態までつなげる支援の進め方です。", body: "「AIを導入すること」から始めるのではなく、まず今の業務を理解し、どこを変えるべきかを整理します。必要に応じてAI・自動化・業務アプリを組み合わせ、導入後の運用や改善まで一つの流れとして支援します。", note: "L∞P Innovateでは、この現場密着型の支援モデルを「AI-FDE」と呼んでいます。業界標準、資格、公的名称を示すものではありません。", items: [
         { title: "現場理解", body: "現場で何が起きているかを理解し、問題を業務要件へ翻訳する。" },
         { title: "設計・実装", body: "AIと人の役割を設計し、必要な仕組みを試作・実装する。" },
         { title: "検証・改善", body: "実際に使って検証し、運用結果を次の改善へ戻す。" },
         { title: "対象になりやすい状況", body: "始め方が分からない / 現場と開発の認識が合わない / PoCが定着しない / ツールが増えて業務全体が未整理 / 小さな改善を実装まで進めたい" },
       ] },
-      { eyebrow: "02 / METHOD", title: "FIELD LOOPで進める", items: [
+      { eyebrow: "02 / PHILOSOPHY INTO DELIVERY", title: "FIELD LOOPを、実務の進め方へ", body: "FIELD LOOPは、現場を起点に改善を循環させる思想です。AI-FDEは、その思想を実際のプロジェクトでどう支援するかを表すDelivery Modelです。", items: [
         { title: "FIELD — 現場を捉える", body: "実際の業務、人、情報、制約を確認する。" },
         { title: "ORDER — 課題を整理する", body: "問題を分解し、優先順位と改善対象を明確にする。" },
         { title: "DESIGN — 仕組みを設計する", body: "人とAIの役割、データ、画面、業務フローを設計する。" },
@@ -170,11 +200,11 @@ export const SITE_ROUTE_CONTENT = {
     slug: "pricing", navLabel: "Pricing", metadataTitle: "料金の考え方｜L∞P Innovate", metaDescription: "課題整理、小規模検証、個別実装、継続支援など、L∞P Innovateへの依頼方法と見積りを決める考え方を紹介します。",
     eyebrow: "PRICING / SCOPE BEFORE PRICE", title: "料金の考え方", lead: "価格を先に当てはめるのではなく、改善対象と必要な範囲を揃えてから見積もります。", introduction: "必要なものだけを、必要な規模から。",
     sections: [
-      { eyebrow: "01 / REQUEST TYPES", title: "依頼の形", body: "最初から大規模な構築を前提にせず、課題と予算に合わせて段階を決めます。", items: [
-        { title: "Initial Definition — 課題整理・要件整理", body: "現状ヒアリング、業務フロー整理、AI活用可能性、改善範囲の整理。" },
-        { title: "PoC / Prototype — 小規模検証", body: "一つの業務や機能を対象に、実際に使えるかを小さく検証。" },
-        { title: "Project Build — 個別実装", body: "AIワークフロー、自動化、業務アプリ、Web等を案件単位で設計・実装。" },
-        { title: "Continuous Support — 継続支援", body: "導入後の操作相談、軽微修正、改善相談、運用確認等を必要に応じて契約。" },
+      { eyebrow: "01 / REQUEST TYPES", title: "依頼の形と料金目安", body: "最初から大規模な構築を前提にせず、課題と予算に合わせて段階を決めます。表示価格は税別です。", items: [
+        { title: "FIELD SESSION", price: "30,000円〜", body: "課題を整理するところから。現状ヒアリング / 業務フロー整理 / 課題整理 / 優先順位 / AI活用可能性 / 次の進め方。" },
+        { title: "PoC / PROTOTYPE", price: "100,000円〜", body: "小さく試して、確かめる。AI Workflow / Automation / RAG / 簡易アプリ / 技術検証 / 運用検証。" },
+        { title: "PROJECT BUILD", price: "300,000円〜", body: "実際に使える仕組みへ。要件整理 / 設計 / 開発 / テスト / 移行 / マニュアル / 操作説明。" },
+        { title: "CONTINUOUS SUPPORT", price: "30,000円 / 月〜", body: "使いながら、改善する。運用相談 / 軽微修正 / Workflow改善 / AI活用相談 / 継続的改善。" },
       ] },
       { eyebrow: "02 / COST DRIVERS", title: "見積りを決める要素", body: "固定料金を無理に当てはめず、見積時に「含むもの / 含まないもの」を明確にします。", items: [
         { title: "Scope", body: "対象業務と実装範囲" }, { title: "Complexity", body: "画面、処理、条件分岐、データ量" },
@@ -185,21 +215,28 @@ export const SITE_ROUTE_CONTENT = {
         { title: "1. 相談内容を確認" }, { title: "2. 現状と改善したい業務を整理" }, { title: "3. 対応範囲と成果物を定義" }, { title: "4. 見積・条件を提示" }, { title: "5. 合意後に着手" },
       ] },
     ],
-    notice: "料金・納期は案件の内容によって異なります。未確認の固定金額・固定納期はサイト上で保証しません。",
+    notice: "記載価格は目安です。対象業務、実装範囲、外部サービス連携、セキュリティ要件、導入支援等により料金は異なります。正式な料金は、対応範囲を確認した上でお見積りします。",
   },
   "case-studies": {
-    slug: "case-studies", navLabel: "Case Studies", metadataTitle: "事例｜L∞P Innovate", metaDescription: "L∞P Innovateが実際に担当した業務改善・アプリ開発・導入支援を、課題、担当範囲、成果物、運用設計が分かる形で紹介します。",
-    eyebrow: "CASE STUDIES / VERIFIED WORK", title: "事例", lead: "成果を大きく見せるための事例ではなく、実際に担当した課題、実装範囲、成果物、運用設計が確認できるものを掲載します。", introduction: "相談記録管理を、現場で運用できるWebアプリへ。",
+    slug: "case-studies", navLabel: "Case Study", metadataTitle: "事例｜L∞P Innovate", metaDescription: "L∞P Innovateが実際に担当した業務改善・アプリ開発・導入支援を、課題、担当範囲、成果物、運用設計が分かる形で紹介します。",
+    eyebrow: "CASE STUDY / VERIFIED WORK", title: "事例", lead: "成果を大きく見せるための事例ではなく、実際に担当した課題、実装範囲、成果物、運用設計が確認できるものを掲載します。", introduction: PUBLISHED_FEATURED_CASE_STUDY?.title ?? "公開条件を確認した事例のみ掲載します。",
     sections: [
-      { eyebrow: "CASE 01 / WELFARE OPERATIONS", title: "課題と実装", body: "福祉関連組織の相談記録業務を対象に、入力だけではなく、管理者確認、職員の閲覧確認、月次集計、CSV出力、印刷、来場者数管理までを一つの業務フローとして整理し、Webアプリとして構築しました。", items: [
-        { title: "課題", body: "記録だけでなく、確認、集計、閲覧状況、印刷といった周辺業務を含めて管理する必要がありました。" },
-        { title: "要件・設計", body: "ヒアリング / 要件整理 / 画面・業務フロー設計" },
-        { title: "実装", body: "Google Apps Script / Google スプレッドシート / 管理者確認 / 閲覧チェック / 月次集計 / CSV出力 / 印刷・PDF保存を想定した表示 / 来場者数管理" },
-        { title: "導入", body: "本番環境移行手順 / 操作マニュアル / オンライン操作説明 / 納品後の初期不具合・軽微修正対応" },
-      ] },
-      { eyebrow: "SECURITY / OPERATION", title: "運用と権限を設計する", body: "本番環境は発注者側アカウントで管理し、納品後は開発側が本番データの閲覧・編集権限を保持しない運用を設計。修正・検証は原則として架空データを使ったダミー環境で行える形にしました。", items: [
-        { title: "Outcome", body: "必要な業務機能を一つの運用へまとめ、正式版を納品。移行手順、操作マニュアル、説明まで含めて現場運用へ接続しました。" },
-      ] },
+      ...(PUBLISHED_FEATURED_CASE_STUDY
+        ? [
+            {
+              eyebrow: "CASE 01 / ANONYMOUS DISCLOSURE",
+              title: PUBLISHED_FEATURED_CASE_STUDY.title,
+              body: `${PUBLISHED_FEATURED_CASE_STUDY.industry}。${PUBLISHED_FEATURED_CASE_STUDY.solution}`,
+              items: [
+                { title: "課題", body: PUBLISHED_FEATURED_CASE_STUDY.challenge },
+                { title: "担当範囲", body: PUBLISHED_FEATURED_CASE_STUDY.scope.join(" / ") },
+                { title: "実装", body: PUBLISHED_FEATURED_CASE_STUDY.implementation.join(" / ") },
+                { title: "技術", body: PUBLISHED_FEATURED_CASE_STUDY.technologies.join(" / ") },
+                { title: "Outcome", body: PUBLISHED_FEATURED_CASE_STUDY.outcome },
+              ],
+            },
+          ]
+        : []),
       { eyebrow: "EDITORIAL POLICY", title: "事例の掲載方針", items: [
         { title: "実際に担当した内容だけを掲載する" }, { title: "担当範囲を明確にする" }, { title: "数値は検証可能な場合だけ掲載する" },
         { title: "顧客名・ロゴは公開許諾を確認する" }, { title: "匿名案件は業種・課題・成果物を中心に紹介する" }, { title: "提案例やデモは実績と明確に区別する" },
@@ -228,7 +265,7 @@ export const SITE_ROUTE_CONTENT = {
         { title: "個人情報や機密情報を扱う相談もできますか？", body: "案件内容を確認した上で、データの最小化、匿名化、権限、保存場所、本番環境と検証環境の分離等を検討します。外部AIサービスへ無条件に機密情報を入力する設計は行いません。" },
         { title: "L∞P Innovate自身もAIを使っていますか？", body: "はい。調査、整理、設計、開発補助、QA、文書作成等にAIを活用しています。ただし重要な判断、顧客との合意、個人情報・機密情報、最終確認は人が責任を持ちます。" },
         { title: "AIの回答をそのまま業務判断に使いますか？", body: "重要な判断をAIだけに委ねることを前提にはしません。AIの出力は誤る可能性があるため、人による確認や一次情報との照合を組み込む設計を基本とします。" },
-        { title: "料金はどのように決まりますか？", body: "対象業務、実装範囲、連携、セキュリティ要件、導入支援等を確認して見積もります。必要以上に大きく作らず、目的に合う範囲から提案します。" },
+        { title: "料金はどのように決まりますか？", body: "FIELD SESSIONは30,000円〜、PoC / Prototypeは100,000円〜、Project Buildは300,000円〜、継続支援は30,000円 / 月〜が税別の目安です。対象業務、実装範囲、連携、セキュリティ要件、導入支援等を確認して正式に見積もります。" },
       ] },
     ],
   },

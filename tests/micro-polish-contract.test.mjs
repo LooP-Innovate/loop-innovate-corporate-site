@@ -84,7 +84,7 @@ test("keeps the final content hierarchy concise and plain-language", async () =>
   assert.doesNotMatch(sectionsSource, /title="現場を、仕組みから変える。"/);
   assert.match(
     contentSource,
-    /現場の課題を整理し、必要な仕組みを考え、実際に作り、使える状態までつなげる支援の進め方です。/,
+    /現場の課題を理解し、必要な仕組みを設計し、実装し、使える状態までつなげる支援の進め方です。/,
   );
   assert.match(
     contentSource,
@@ -92,7 +92,9 @@ test("keeps the final content hierarchy concise and plain-language", async () =>
   );
   assert.match(
     contentSource,
-    /L∞P Innovateでは、この現場密着型の進め方を「AI-FDE」と呼んでいます。/,
+    /L∞P Innovateでは、この現場密着型の支援モデルを「AI-FDE」と呼んでいます。/,
   );
+  assert.match(sectionsSource, /DELIVERY MODEL \/ AI-FDE/);
+  assert.match(sectionsSource, /PHILOSOPHY \/ FIELD LOOP/);
   assert.doesNotMatch(contentSource, /公的資格、認定制度、業界標準/);
 });

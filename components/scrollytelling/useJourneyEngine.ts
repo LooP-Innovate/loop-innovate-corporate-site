@@ -15,7 +15,9 @@ import {
 } from "@/lib/scrollytelling/interaction-timeline";
 import {
   calculateJourneyTimeline,
-  getSceneJourneyProgress,
+  getJourneyEndpointProgress,
+  getWeightedJourneyScrollProgress,
+  remapJourneyScrollProgress,
   type JourneyTimeline,
 } from "@/lib/scrollytelling/timeline";
 
@@ -23,7 +25,7 @@ const DEBUG_UPDATE_INTERVAL_MS = 100;
 const DIRECTION_SWITCH_THRESHOLD = 0.002;
 // Keep ADOPT readable before the endpoint RETURN story takes over the final
 // transition. Visual formation still follows the existing interaction timeline.
-const RETURN_STORY_START = 0.55;
+const RETURN_STORY_START = 0.9;
 
 export const JOURNEY_DEBUG_ENABLED =
   process.env.NODE_ENV !== "production" ||
@@ -59,6 +61,7 @@ export type JourneyRuntimeMetrics = {
   returnProgress: number;
   returnExitPhase: ReturnExitPhase;
   returnExitProgress: number;
+  endpointProgress: number;
 };
 
 const initialTimeline = calculateJourneyTimeline(0, SCENE_COUNT);
@@ -81,6 +84,7 @@ const initialMetrics: JourneyRuntimeMetrics = {
   returnProgress: 0,
   returnExitPhase: "hold",
   returnExitProgress: 0,
+  endpointProgress: 0,
 };
 
 function getViewportTier(): JourneyFocalTier {
@@ -109,12 +113,14 @@ function setVisualVariables(
   section: HTMLElement,
   timeline: JourneyTimeline,
   reducedMotion: boolean,
+  endpointProgress = 0,
 ): void {
   const currentScene = getSceneByIndex(timeline.sceneIndex);
   const interaction = getJourneyInteractionState(
     timeline,
     currentScene.id,
     reducedMotion,
+    endpointProgress,
   );
   const sceneProgress = reducedMotion ? 0.5 : timeline.segmentProgress;
   const destinationProgress = reducedMotion ? 0.5 : timeline.blendProgress;
@@ -206,6 +212,7 @@ function setVisualVariables(
   section.dataset.returnExitPhase = interaction.returnExitPhase;
   section.dataset.returnExitProgress = interaction.returnExitProgress.toFixed(4);
   section.dataset.returnExitErosion = interaction.returnExitErosion.toFixed(4);
+  section.dataset.endpointProgress = endpointProgress.toFixed(4);
   writeDerivedProgress("--loop-scene", sceneProgress);
   writeDerivedProgress("--loop-destination", destinationProgress);
 }
@@ -222,6 +229,8 @@ export function useJourneyEngine({
   const timelineRef = useRef<JourneyTimeline>(initialTimeline);
   const scrollDirectionRef = useRef<JourneyScrollDirection>("forward");
   const directionAnchorRef = useRef(0);
+  const physicalProgressRef = useRef(0);
+  const endpointProgressRef = useRef(0);
   const reducedMotionRef = useRef(false);
   const journeyInViewRef = useRef(false);
   const viewportTierRef = useRef<JourneyFocalTier>("desktop");
@@ -250,6 +259,7 @@ export function useJourneyEngine({
       currentTimeline,
       currentScene.id,
       reducedMotionRef.current,
+      endpointProgressRef.current,
     );
 
     lastDebugUpdateRef.current = performance.now();
@@ -271,6 +281,7 @@ export function useJourneyEngine({
       returnProgress: interaction.returnProgress,
       returnExitPhase: interaction.returnExitPhase,
       returnExitProgress: interaction.returnExitProgress,
+      endpointProgress: endpointProgressRef.current,
     });
   }, []);
 
@@ -309,10 +320,12 @@ export function useJourneyEngine({
 
     const { sectionTop, scrollDistance } = geometryRef.current;
     const rawProgress = (window.scrollY - sectionTop) / scrollDistance;
-    const baseTimeline = calculateJourneyTimeline(rawProgress, SCENE_COUNT);
+    const journeyProgress = remapJourneyScrollProgress(rawProgress);
+    const endpointProgress = getJourneyEndpointProgress(rawProgress);
+    const baseTimeline = calculateJourneyTimeline(journeyProgress, SCENE_COUNT);
     const blendStart = getSceneByIndex(baseTimeline.sceneIndex).blendStart;
     const nextTimeline = calculateJourneyTimeline(
-      rawProgress,
+      journeyProgress,
       SCENE_COUNT,
       blendStart,
     );
@@ -326,7 +339,14 @@ export function useJourneyEngine({
     }
 
     timelineRef.current = nextTimeline;
-    setVisualVariables(section, nextTimeline, reducedMotionRef.current);
+    physicalProgressRef.current = Math.min(1, Math.max(0, rawProgress));
+    endpointProgressRef.current = endpointProgress;
+    setVisualVariables(
+      section,
+      nextTimeline,
+      reducedMotionRef.current,
+      endpointProgress,
+    );
     const nextActiveSceneIndex =
       nextTimeline.nextSceneIndex === SCENE_COUNT - 1 &&
       nextTimeline.segmentProgress >= RETURN_STORY_START
@@ -390,7 +410,7 @@ export function useJourneyEngine({
       previousOrientation !== null &&
       previousOrientation !== nextOrientation &&
       journeyInViewRef.current;
-    const journeyProgress = timelineRef.current.journeyProgress;
+    const journeyProgress = physicalProgressRef.current;
     const nextViewportTier = getViewportTier();
 
     viewportOrientationRef.current = nextOrientation;
@@ -407,7 +427,9 @@ export function useJourneyEngine({
 
     if (preserveProgress) {
       window.scrollTo({
-        top: geometry.sectionTop + journeyProgress * geometry.scrollDistance,
+        top:
+          geometry.sectionTop +
+          journeyProgress * geometry.scrollDistance,
         behavior: "auto",
       });
     }
@@ -419,7 +441,9 @@ export function useJourneyEngine({
   const jumpToScene = useCallback(
     (sceneIndex: number) => {
       measureJourney();
-      const targetProgress = getSceneJourneyProgress(sceneIndex, SCENE_COUNT);
+      const targetProgress = getWeightedJourneyScrollProgress(
+        sceneIndex / (SCENE_COUNT - 1),
+      );
       const { sectionTop, scrollDistance } = geometryRef.current;
 
       window.scrollTo({
