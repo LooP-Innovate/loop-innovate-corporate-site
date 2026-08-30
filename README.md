@@ -73,7 +73,7 @@ CodexとClaude Codeを開発支援として活用しています。用途は単�
 | Styling | CSS Modules / CSS Custom Properties | レスポンシブ、モーション、デザイントークン |
 | Runtime | Node.js 24+ / npm | 開発、検証、production build |
 | Quality | ESLint / jsx-a11y / Node.js Test Runner | 静的解析、アクセシビリティ規則、単体テスト |
-| Version Control | Git | 変更管理。GitHub公開は準備中 |
+| Version Control | Git / GitHub | 変更管理。Publicリポジトリとして公開中 |
 
 Cloudflareは本番デプロイ候補ですが、現時点のリポジトリにはデプロイ設定を含めていません。実際に統合した段階で技術スタックへ追加します。
 
@@ -166,7 +166,7 @@ tests/                       Timeline、アセット、UI契約の自動テス�
 
 ## 注意事項
 
-- 本リポジトリは、ポートフォリオおよび開発プロセスの紹介を目的として公開予定です。
+- 本リポジトリは、ポートフォリオおよび開発プロセスの紹介を目的としてPublicで公開しています。
 - 現在開発中のため、仕様、デザイン、コンテンツ、アセットは変更される可能性があります。
 - 実績、数値、顧客情報、法務情報は、公開許可や事実確認が取れたものだけを掲載します。
 - 本番サイトへのデプロイや既存WordPressサイトの変更は、このリポジトリの公開とは別の承認プロセスで行います。
