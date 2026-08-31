@@ -2,9 +2,15 @@
 
 Inventory at the Next.js reference: **17 files / 67 tests**.
 
-- **A — 50:** reimplement as automated PHP/WordPress or theme-JavaScript tests.
+- **A0 — 8 source tests:** consolidate into 12 Phase 6 core safety assertions.
+- **A1 — 42 source tests:** reimplement where required after the Phase 6 publication-safety gate.
 - **B — 15:** migrate to the pre-launch manual QA checklist.
 - **C — 2:** Next.js-specific checks; no direct WordPress equivalent.
+
+The inventory table below retains its original A/B/C classification so every
+Next.js test remains traceable. The A0/A1 refinement is a migration priority,
+not a second test inventory: A0 + A1 preserves the original 50 automated
+migration candidates.
 
 Migration phases used below:
 
@@ -83,13 +89,50 @@ Migration phases used below:
 | 66 | timeline: RETURN endpoint tail | Calm endpoint contract | A | Theme timeline unit test | M3 | Locked ending |
 | 67 | timeline: invalid inputs | Fail-fast validation | A | Theme timeline validation test | M3 | Safety invariant |
 
-## Priority migration gates
+## A priority refinement
 
-The following cannot be postponed to a visual-only checklist and must remain A or
-B as shown: indexing publication gate, Tokushoho publication gate, Contact
-readiness, legal-route integrity, Case Study gate, placeholder/dummy rejection,
-sitemap/robots gating and public HTTPS validation.
+| Priority | Existing source rows | Count | Phase 6 effect |
+| --- | --- | ---: | --- |
+| A0 | #13–15, #35–36, #50–52 | 8 | Blocking core publication-safety source tests; consolidated below rather than ported 1:1 |
+| A1 | #1–8, #23–34, #42–43, #45–49, #53–67 | 42 | Required for the relevant Journey, theme and operational-hardening phases, but does not block Phase 6 publication-guard completion |
 
-Before WordPress becomes public, all M1 automated tests must pass; all M3 tests must
-pass before Journey parity review; and every B item must be signed off at the four
-reference viewports plus reduced-motion mode.
+The A0 count represents eight existing source tests. Their publication-safety
+clauses are consolidated into 12 WordPress logical assertions; this avoids
+copying framework-shaped test files or unrelated clauses into PHP merely to
+preserve a one-to-one count.
+
+## Phase 6 Core Safety Suite
+
+| ID | Logical assertion | Existing source rows |
+| --- | --- | --- |
+| A0-01 | A production URL is accepted only when it is public HTTPS. Reject HTTP, localhost, embedded credentials, loopback, private, link-local, CGNAT and local IPv6 addresses with a table-driven validator. | #50 |
+| A0-02 | `Contact Ready = false` blocks indexing even when the production URL and explicit approval are otherwise valid. | #50 |
+| A0-03 | Explicit indexing approval is required; indexing is enabled only when production URL, Contact readiness and approval are all valid. | #50 |
+| A0-04 | When indexing is disabled, render `noindex` and omit canonical and URL-bearing JSON-LD output. | #50, #52 |
+| A0-05 | When indexing is disabled, robots and sitemap behavior fails closed: the sitemap is disabled or empty and no public URL is advertised. | #52 |
+| A0-06 | Tokushoho readiness is false when any required fact, verification state or publication approval is missing. | #35, #51 |
+| A0-07 | Tokushoho validation rejects null, whitespace, dummy/sample values, `未定`, `確認中`, example domains and synthetic phone numbers. | #35, #51 |
+| A0-08 | When Tokushoho is not ready, direct access returns 404 and the route is absent from Footer, Legal Hub, sitemap, search, feed and REST output. | #36, #51, #52 |
+| A0-09 | A Case Study is not public while pending or while client-disclosure approval is absent. | #14, #15 |
+| A0-10 | A metric is displayed only when it is verified and publication-approved. Unapproved metrics remain hidden or return the case to review; a truthful zero-metric case remains valid. | #13, #15 |
+| A0-11 | The same Case Study publication predicate is enforced across single, archive, template, REST, search, feed and sitemap surfaces. | #15 |
+| A0-12 | `/terms-of-service` returns a real HTTP 301 to `/terms`, with the correct `Location` header and no redirect chain. | #52 |
+
+Phase 6 completion requires all 12 A0 logical assertions to pass. A1 remains
+required for its designated Journey/theme migration and operational-hardening
+phase, but it does not block completion of the Phase 6 publication guard.
+
+Porting notes:
+
+- Current test #13 validates an empty `verifiedMetrics` set. WordPress must add
+  per-metric verification and publication approval for A0-10.
+- Current test #51 uses example-domain and synthetic-phone values as a ready
+  fixture. WordPress must instead reject those values under A0-07.
+- Current test #52 is largely source-contract validation. Robots, sitemap, head
+  output and redirects must become real HTTP integration assertions.
+- Print CSS, copyright, icon and Open Graph clauses that share an existing source
+  row are not A0; source row numbers identify provenance, not a 1:1 port.
+
+Before WordPress becomes public, all A0 assertions must pass; all relevant A1
+tests must pass before their migration phase closes; and every B item must be
+signed off at the four reference viewports plus reduced-motion mode.

@@ -35,3 +35,31 @@ Audit scope: all files under `public/`, with full searches across routes, compon
 ## Removed
 
 None. The zero-reference safety condition was not met for the only large legacy candidate.
+
+## Final WordPress migration decision
+
+**Decision: B — clean the legacy Next.js dependency and safely delete the asset;
+do not migrate it to WordPress.**
+
+`field-v01.mp4` is not part of the WordPress asset manifest. The production home
+page uses the six-still renderer; neither `ScrollVideoLab` nor
+`resolveJourneyAsset` is imported by a production route, `useJourneyEngine`
+selects the still renderer, and the measured Journey video transfer is zero.
+The remaining scene-config, validator and test references are residual Phase
+01/02 proof-of-concept contracts, not production-architecture requirements.
+
+Deletion must be performed as a coordinated cleanup on the Phase 1 working line,
+not as an isolated file removal from the immutable reference:
+
+1. Set the FIELD `desktopVideo` contract to `null` and remove the concrete legacy
+   path constant.
+2. Remove or convert real-file assertions to synthetic resolver fixtures while
+   retaining the nullable future-video schema if still useful.
+3. Remove the unimported `components/experiments/scroll-video/` implementation.
+4. Confirm zero production and contract references, then remove
+   `public/video/field-v01.mp4` and its legacy README.
+5. Re-run validation, tests, build and smoke checks.
+
+The asset is therefore excluded from WordPress migration. The existing
+`v3.0-reference` annotated tag and Git history preserve it for historical visual
+comparison, so the migration does not lose the original source reference.
