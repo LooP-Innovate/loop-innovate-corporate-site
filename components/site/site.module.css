@@ -15,7 +15,6 @@
   --site-inset-right: max(var(--site-gutter), env(safe-area-inset-right));
   min-width: 0;
   max-width: 100%;
-  overflow-x: clip;
   background: var(--site-dark);
   color: var(--text-primary, #f7fbff);
   font-family: var(--font-sans);
@@ -45,6 +44,7 @@
   border-bottom: 1px solid rgb(247 251 255 / 10%);
   background: rgb(7 17 29 / 84%);
   padding-top: env(safe-area-inset-top);
+  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   transition:
     background-color 280ms ease,
@@ -76,6 +76,9 @@
 }
 
 .footerWordmark {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   color: #f7fbff;
   text-decoration: none;
 }
@@ -1377,6 +1380,7 @@
 }
 
 .siteFooter {
+  overflow-x: clip;
   padding: clamp(4rem, 8vw, 8rem) var(--site-inset-right)
     calc(2rem + env(safe-area-inset-bottom)) var(--site-inset-left);
   border-top: 1px solid var(--site-line-dark);
@@ -1483,6 +1487,7 @@
 }
 
 .routeMain {
+  overflow-x: clip;
   background: var(--site-paper);
   color: var(--site-ink);
 }
@@ -2154,6 +2159,7 @@
 }
 
 .routeSections {
+  overflow-x: clip;
   background: #f7f7f5;
 }
 
@@ -2164,9 +2170,13 @@
 
 .routeSectionContent {
   display: grid;
-  grid-template-columns: minmax(18rem, 1fr) minmax(18rem, 0.75fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr);
   gap: clamp(3rem, 9vw, 9rem);
   margin-top: 2rem;
+}
+
+.routeSectionContent > * {
+  min-width: 0;
 }
 
 .routeSection h2 {
@@ -2177,6 +2187,7 @@
   font-weight: 420;
   letter-spacing: -0.05em;
   line-height: var(--leading-editorial);
+  overflow-wrap: anywhere;
   text-wrap: balance;
   word-break: auto-phrase;
 }
@@ -2299,6 +2310,9 @@
 }
 
 .legalDocumentLink {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
   color: inherit;
   text-decoration-color: rgb(50 139 211 / 42%);
   text-decoration-thickness: 1px;
@@ -2331,7 +2345,7 @@
 .founderPortraitMedia {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 816 / 1085;
   background:
     linear-gradient(90deg, transparent 49.9%, rgb(50 139 211 / 8%) 50%, transparent 50.1%),
     linear-gradient(180deg, transparent 67%, rgb(16 25 34 / 5%) 100%),
@@ -2361,9 +2375,8 @@
 
 .founderPortraitImage {
   z-index: 1;
-  object-fit: contain;
-  object-position: center bottom;
-  filter: drop-shadow(0 1.4rem 1.7rem rgb(16 25 34 / 11%));
+  object-fit: cover;
+  object-position: center top;
 }
 
 .founderPortraitCaption {

@@ -1764,6 +1764,7 @@
   font-size: 0.67rem;
   line-height: 1.35;
   pointer-events: auto;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 

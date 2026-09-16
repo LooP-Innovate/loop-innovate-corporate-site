@@ -198,7 +198,7 @@ export function RoutePage({ content }: RoutePageProps) {
                               src={FOUNDER_PROFILE.portrait}
                               alt={FOUNDER_PROFILE.portraitAlt}
                               fill
-                              sizes="(max-width: 64rem) 20rem, 32vw"
+                              sizes="(max-width: 48rem) 20rem, (max-width: 64rem) 24rem, 32vw"
                             />
                           </div>
                           <figcaption className={styles.founderPortraitCaption}>

@@ -68,14 +68,67 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
       return;
     }
 
+    const applySurface = (isLight: boolean) => {
+      const next = isLight ? "light" : "dark";
+      // Writing the same value still invalidates style and restarts the
+      // background transition, which is what made the bar flicker on iOS.
+      if (header.dataset.surface !== next) {
+        header.dataset.surface = next;
+      }
+    };
+
     let frameId = 0;
-    const syncSurface = () => {
-      const corporateSurface = document.querySelector<HTMLElement>(
-        "[data-corporate-surface]",
-      );
-      const returnExit = document.querySelector<HTMLElement>(
+    // One measurement per frame. The previous version nested two animation
+    // frames per scroll tick, so it forced layout twice for the same answer.
+    function scheduleSurfaceSync() {
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        syncSurface();
+      });
+    }
+
+    let corporateSurface: HTMLElement | null = null;
+    let returnExit: HTMLElement | null = null;
+    let erosionObserver: MutationObserver | null = null;
+
+    // data-return-exit-progress is written by the journey engine on its first
+    // frame, so it does not exist yet when the header mounts. Resolve both
+    // targets lazily and stop querying the document once they are found.
+    const resolveTargets = () => {
+      if (!corporateSurface?.isConnected) {
+        corporateSurface = document.querySelector<HTMLElement>(
+          "[data-corporate-surface]",
+        );
+      }
+
+      if (returnExit?.isConnected) {
+        return;
+      }
+
+      returnExit = document.querySelector<HTMLElement>(
         "[data-return-exit-progress]",
       );
+      if (!returnExit) {
+        return;
+      }
+
+      // Erosion keeps changing on the engine's own frame, which can land after
+      // the last scroll-driven sync; watching it keeps the bar correct once
+      // scrolling has already stopped.
+      erosionObserver?.disconnect();
+      erosionObserver = new MutationObserver(scheduleSurfaceSync);
+      erosionObserver.observe(returnExit, {
+        attributes: true,
+        attributeFilter: ["data-return-exit-erosion"],
+      });
+    };
+
+    const syncSurface = () => {
+      resolveTargets();
 
       const headerBoundary = header.getBoundingClientRect().bottom;
       const corporateBounds = corporateSurface?.getBoundingClientRect();
@@ -95,27 +148,21 @@ export function SiteHeader({ currentPath }: SiteHeaderProps) {
           returnExitErosion >= 0.55,
       );
 
-      header.dataset.surface =
-        corporateIsLight || returnExitIsLight ? "light" : "dark";
-    };
-    const scheduleSurfaceSync = () => {
-      if (frameId === 0) {
-        frameId = window.requestAnimationFrame(() => {
-          syncSurface();
-          frameId = window.requestAnimationFrame(() => {
-            frameId = 0;
-            syncSurface();
-          });
-        });
-      }
+      applySurface(corporateIsLight || returnExitIsLight);
     };
 
-    scheduleSurfaceSync();
+    syncSurface();
+    // Mount only: the first pass runs before the journey engine has written its
+    // dataset, so take one more look on the next frame.
+    const settleId = window.requestAnimationFrame(syncSurface);
+
     window.addEventListener("scroll", scheduleSurfaceSync, { passive: true });
     window.addEventListener("resize", scheduleSurfaceSync);
     window.addEventListener("orientationchange", scheduleSurfaceSync);
 
     return () => {
+      erosionObserver?.disconnect();
+      window.cancelAnimationFrame(settleId);
       if (frameId !== 0) {
         window.cancelAnimationFrame(frameId);
       }
