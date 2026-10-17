@@ -32,7 +32,7 @@ const ROUTE_MOTION_MAP: Record<SiteRouteSlug, readonly string[]> = {
   contact: ["reveal", "reveal", "progress"],
   security: ["quiet", "quiet", "quiet", "quiet"],
   "ai-policy": ["quiet", "quiet", "quiet", "quiet"],
-  "privacy-policy": ["quiet", "quiet", "quiet", "quiet", "quiet", "quiet"],
+  "privacy-policy": ["quiet", "quiet", "quiet", "quiet", "quiet", "quiet", "quiet"],
   terms: ["quiet", "quiet", "quiet", "quiet", "quiet", "quiet", "quiet"],
   tokushoho: ["quiet", "quiet", "quiet", "quiet"],
   legal: ["quiet", "quiet"],

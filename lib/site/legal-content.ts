@@ -74,7 +74,7 @@ export function isTokushohoPublicationReady(
 
 export const LEGAL_DOCUMENT_DATES = {
   privacyPolicyEstablished: "2026年8月27日",
-  privacyPolicyRevised: "2026年8月27日",
+  privacyPolicyRevised: "2026年10月17日",
   termsEffective: "2026年8月27日",
   aiPolicyRevised: "2026年8月27日",
   securityRevised: "2026年8月27日",
